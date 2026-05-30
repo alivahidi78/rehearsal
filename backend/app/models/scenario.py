@@ -10,9 +10,8 @@ class Scenario(Base, TimestampMixin):
     title = mapped_column(String(255), nullable=False)
     situation = mapped_column(Text, nullable=False)
     
-    scenario_characters = relationship("ScenarioCharacter", back_populates="scenario")
-    scenario_relationships = relationship("ScenarioRelationship", back_populates="scenario")
-    
+    scenario_characters = relationship("ScenarioCharacter", back_populates="scenario", cascade="all, delete-orphan")
+    scenario_relationships = relationship("ScenarioRelationship", back_populates="scenario", cascade="all, delete-orphan")  
 
 class ScenarioCharacter(Base):
     __tablename__ = "scenario_characters"
