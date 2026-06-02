@@ -50,3 +50,7 @@ class ScenarioSummary(BaseModel):
 class ScenarioRead(ScenarioBase, ScenarioSummary):
     scenario_characters: list[ScenarioCharacterRead] = []
     scenario_relationships: list[ScenarioRelationshipRead] = []
+    
+class ScenarioUpdate(BaseModel):
+    title: Optional[str] = None
+    situation: Optional[str] = None

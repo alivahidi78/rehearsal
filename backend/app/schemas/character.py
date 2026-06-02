@@ -4,7 +4,7 @@ from datetime import datetime
 
 from app.models.character import NoteCategory
 
-class CharacterScenarioHeader(BaseModel):
+class ScenarioCharSummary(BaseModel):
     scenario_id: int
     is_player: bool
     scene_knowledge: Optional[str] = None
@@ -45,4 +45,14 @@ class CharacterSummary(BaseModel):
         
 class CharacterRead(CharacterBase, CharacterSummary):
     behavioral_notes: list[BehavioralNoteRead] = []
-    scenario_characters: list[CharacterScenarioHeader] = []
+    scenario_characters: list[ScenarioCharSummary] = []
+    
+class CharacterUpdate(BaseModel):
+    name: Optional[str] = None
+    age: Optional[int] = None
+    appearance: Optional[str] = None
+    personality: Optional[str] = None
+    backstory: Optional[str] = None
+    speech_patterns: Optional[str] = None
+    motivations: Optional[str] = None
+    fears: Optional[str] = None
