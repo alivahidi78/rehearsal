@@ -35,15 +35,18 @@ class ScenarioBase(BaseModel):
     situation: str
     
 class ScenarioCreate(ScenarioBase):
-    characters: list[ScenarioCharacterInput]
-    relationships: list[ScenarioRelationshipInput] = []
-
-class ScenarioRead(ScenarioBase):
+    scenario_characters: list[ScenarioCharacterInput]
+    scenario_relationships: list[ScenarioRelationshipInput] = []
+    
+class ScenarioSummary(BaseModel):
     id: int
     created_at: datetime
     updated_at: datetime
-    characters: list[ScenarioCharacterRead]
-    relationships: list[ScenarioRelationshipRead]
+    title: str
     
     class Config:
         from_attributes = True
+
+class ScenarioRead(ScenarioBase, ScenarioSummary):
+    scenario_characters: list[ScenarioCharacterRead] = []
+    scenario_relationships: list[ScenarioRelationshipRead] = []

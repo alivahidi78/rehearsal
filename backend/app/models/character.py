@@ -22,8 +22,8 @@ class Character(Base, TimestampMixin):
     motivations = mapped_column(Text, nullable=True)
     fears = mapped_column(Text, nullable=True)
 
-    behavioral_notes = relationship("BehavioralNote", back_populates="character")
-    scenario_characters = relationship("ScenarioCharacter", back_populates="character")
+    behavioral_notes = relationship("BehavioralNote", back_populates="character", lazy="selectin")
+    scenario_characters = relationship("ScenarioCharacter", back_populates="character", lazy="selectin")
     
 class BehavioralNote(Base):
     __tablename__ = "behavioral_notes"

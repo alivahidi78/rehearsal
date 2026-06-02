@@ -10,8 +10,9 @@ class Scenario(Base, TimestampMixin):
     title = mapped_column(String(255), nullable=False)
     situation = mapped_column(Text, nullable=False)
     
-    scenario_characters = relationship("ScenarioCharacter", back_populates="scenario", cascade="all, delete-orphan")
-    scenario_relationships = relationship("ScenarioRelationship", back_populates="scenario", cascade="all, delete-orphan")  
+    # TODO replace selectin with joinedload in api later
+    scenario_characters = relationship("ScenarioCharacter", back_populates="scenario", cascade="all, delete-orphan", lazy="selectin") 
+    scenario_relationships = relationship("ScenarioRelationship", back_populates="scenario", cascade="all, delete-orphan", lazy="selectin")  
 
 class ScenarioCharacter(Base):
     __tablename__ = "scenario_characters"
