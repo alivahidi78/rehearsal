@@ -16,10 +16,18 @@ Writers often know their characters in the abstract but struggle to hear their v
 
 | Layer | Tech |
 |---|---|
-| Backend | Python, FastAPI, LangGraph |
+| Backend | Python, FastAPI, SQLAlchemy |
+| API | REST, Pydantic (request/response validation) |
+| Orchestration | LangGraph (stateful, checkpointed) |
 | LLM | Anthropic API (Claude Sonnet) |
-| Database | SQLite (dev) |
-| Frontend | React, TypeScript |
+| Database | SQLite |
+| Frontend | React 19, TypeScript, React Router 7 |
+
+## Architecture
+
+The backend exposes a REST API via three FastAPI routers (`characters`, `scenarios`, `sessions`). All request and response bodies are validated with Pydantic schemas. SQLAlchemy models back a SQLite database that persists characters, scenarios, relationship dynamics, and accumulated behavioral notes.
+
+Session interactions run through a LangGraph state machine with two conditional nodes: `generate_response` (calls LLM with full character context + behavioral notes) and `process_feedback` (extracts corrections and writes them back as notes). LangGraph's SqliteSaver checkpoints every state transition, enabling rewind.
 
 ## Project structure
 
@@ -27,17 +35,17 @@ Writers often know their characters in the abstract but struggle to hear their v
 rehearsal/
 ├── backend/
 │   ├── app/
-│   │   ├── models/       # SQLAlchemy models
-│   │   ├── schemas/      # Pydantic request/response shapes
-│   │   ├── api/          # FastAPI routers
-│   │   ├── graph/        # LangGraph nodes and graph definition
-│   │   ├── database.py   # SQLite engine and session
-│   │   ├── config.py     # Settings
-│   │   └── main.py       # App entrypoint
+│   │   ├── api/          # FastAPI routers (characters, scenarios, sessions)
+│   │   ├── models/       # SQLAlchemy ORM models
+│   │   ├── schemas/      # Pydantic request/response schemas
+│   │   ├── graph/        # LangGraph nodes, graph definition, state
+│   │   ├── database.py   # SQLite engine and session factory
+│   │   ├── config.py     # Settings (loaded from .env)
+│   │   └── main.py       # App entrypoint with CORS middleware
 │   └── requirements.txt
 └── frontend/
     ├── src/
-    │   ├── components/   # React components
+    │   ├── components/   # React components (Library, Session)
     │   ├── api/          # Typed fetch wrappers
     │   └── main.tsx      # Entrypoint
     ├── package.json

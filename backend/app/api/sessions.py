@@ -117,6 +117,7 @@ def send_message(request: MessageRequest, db: Session = Depends(get_db)):
 
 @router.post("/feedback", response_model=FeedbackSessionResponse)
 def send_feedback(feedback: FeedbackRequest, db: Session = Depends(get_db)):
+    # TODO return refined feedback for the user to verify
     config = {"configurable": {"thread_id": feedback.session_id}}
     
     result = rehearsal_graph.invoke(
