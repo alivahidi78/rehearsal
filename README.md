@@ -52,6 +52,30 @@ rehearsal/
     └── tsconfig.json
 ```
 
+## Roadmap
+
+### Done
+- [x] SQLAlchemy models for characters, scenarios, relationship dynamics, and behavioral notes
+- [x] LangGraph state machine with two conditional nodes (roleplay and feedback extraction)
+- [x] Session rewind via SqliteSaver checkpointing on every state transition
+- [x] Behavioral notes persisted and injected into subsequent prompts so corrections accumulate
+- [x] Claude tool-use enforced on both nodes for structured JSON output
+- [x] Full CRUD REST API for characters and scenarios
+- [x] Session endpoints: start, send message, submit feedback, retrieve state
+- [x] Session UI: dual-mode input, narrative history, uncertainty panel, keyboard shortcuts
+
+### In Progress
+- [ ] TypeScript API client for character and scenario endpoints (session client already complete)
+- [ ] Library UI: character and scenario browsing, creation, and management
+- [ ] Scenario composition: assign characters and define per-pair relationship dynamics
+
+### Planned
+- [ ] Session listing, resumption, and deletion
+- [ ] Streaming LLM responses
+- [ ] Scenario editing: add or remove characters and update relationship dynamics after creation
+
+---
+
 ## Setup
 
 ### Backend
@@ -61,7 +85,7 @@ cd backend
 python -m venv venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
-cp .env.example .env      # add your Anthropic API key
+cp .env.example .env 
 uvicorn app.main:app --reload
 ```
 
@@ -69,16 +93,7 @@ uvicorn app.main:app --reload
 
 ```bash
 cd frontend
+cp .env.example .env
 npm install
 npm run dev
 ```
-
-## Environment variables
-
-```
-ANTHROPIC_API_KEY=your-key-here
-```
-
-## Status
-
-Early development.
