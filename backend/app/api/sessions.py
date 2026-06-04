@@ -2,7 +2,7 @@ import uuid
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session, joinedload
 from app.database import get_db
-from app.schemas.session_api import StartSessionRequest, MessageRequest, FeedbackRequest, SessionResponse, FeedbackSessionResponse
+from app.schemas.session_api import StartSessionRequest, MessageRequest, FeedbackRequest, SessionResponse, FeedbackSessionResponse, SessionStateResponse
 
 from app.graph.graph import rehearsal_graph
 from app.graph.state import RehearsalState
@@ -16,6 +16,14 @@ from app.config import settings
 # TODO add streaming LLM responses instead of waiting for the full response
 router = APIRouter(prefix="/sessions", tags=["sessions"])
 
+@router.get("/{session_id}", response_model=SessionStateResponse)
+def get_session(session_id: str):
+    config = {"configurable": {"thread_id": session_id}}
+    state = rehearsal_graph.get_state(config) # type: ignore
+    if not state.values:
+        raise HTTPException(status_code=404, detail="Session not found")
+    return state.values
+
 @router.post("/start", response_model=SessionResponse)
 def start_session(request: StartSessionRequest,  db: Session = Depends(get_db)):
     # TODO check if player character exists in the scenario
@@ -26,6 +34,10 @@ def start_session(request: StartSessionRequest,  db: Session = Depends(get_db)):
     
     if not scenario:
         raise HTTPException(status_code=404, detail="Scenario not found")
+    
+    player_sc = next((sc for sc in scenario.scenario_characters if sc.is_player), None)
+    if not player_sc:
+        raise HTTPException(status_code=400, detail="No player character set for this scenario")
     
     # load and assemble session characters
     session_characters = []
@@ -65,7 +77,7 @@ def start_session(request: StartSessionRequest,  db: Session = Depends(get_db)):
     initial_state = RehearsalState(
         messages=[],
         scenario=session_scenario,
-        player_character_id=request.player_character_id,
+        player_character_id=player_sc.character_id,
         last_response=None,
         pending_feedback=None,
         last_feedback_response=None,

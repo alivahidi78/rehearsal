@@ -1,9 +1,9 @@
 from typing import Optional
 from pydantic import BaseModel
+from app.schemas.session_internal import LLMResponse
 
 class StartSessionRequest(BaseModel):
     scenario_id: int
-    player_character_id: int
 
 class MessageRequest(BaseModel):
     session_id: str
@@ -23,3 +23,11 @@ class FeedbackSessionResponse(BaseModel):
     session_id: str
     success: bool
     error: Optional[str] = None
+    
+class MessageRead(BaseModel):
+    role: str
+    content: str
+
+class SessionStateResponse(BaseModel):
+    messages: list[MessageRead]
+    last_response: Optional[LLMResponse] = None
