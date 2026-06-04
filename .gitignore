@@ -1,4 +1,4 @@
-backend/*.db
+backend/*.db*
 .env
 backend/.env
 backend/.venv

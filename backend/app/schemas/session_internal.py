@@ -4,6 +4,8 @@ from app.schemas.character import BehavioralNoteRead
 from app.schemas.scenario import ScenarioRelationshipRead
 from app.models.character import NoteCategory
 
+#TODO delete sessions. Retrieve all sessions
+
 class SessionCharacter(BaseModel):
     id: int
     name: str

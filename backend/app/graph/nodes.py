@@ -1,7 +1,9 @@
-from app.schemas.session import LLMResponse, FeedbackResponse
+from app.schemas.session_internal import LLMResponse, FeedbackResponse
 from app.models.character import NoteCategory
 from app.graph.state import RehearsalState
 from app.config import client, settings
+
+# TODO add default user commands for the way story progresses
 
 def mock_llm_response() -> LLMResponse:
     return LLMResponse(
@@ -83,7 +85,6 @@ def build_roleplay_prompt(state: RehearsalState) -> str:
     return prompt  
 
 def generate_response(state: RehearsalState) -> dict:
-    error = False
     prompt = build_roleplay_prompt(state)
     
     try:
@@ -92,21 +93,19 @@ def generate_response(state: RehearsalState) -> dict:
         else:
             llm_response = llm_call(prompt, state["messages"])
     except Exception as e:
-        error = True
-        llm_response = LLMResponse(
-            narrative="Something went wrong, please try again.",
-            uncertainty=str(e) if settings.debug else "An error occurred.",
-            await_input=True
-        )
+        return {
+            "messages": [],
+            "last_response": LLMResponse(
+                narrative="Something went wrong, please try again.",
+                uncertainty=str(e) if settings.debug else "An error occurred.",
+                await_input=True)
+            }
         
-    if not error:
-        updated_messages = state["messages"] + [
-            {"role": "assistant", "content": llm_response.narrative}
-        ]
-    else:
-        updated_messages = state["messages"]
     
-    return {"messages": updated_messages, "last_response": llm_response}
+    return {
+        "messages": [{"role": "assistant", "content": llm_response.narrative}],
+        "last_response": llm_response
+    }
 
 def build_feedback_prompt(state: RehearsalState, feedback: str) -> str:
     sc = state["scenario"]

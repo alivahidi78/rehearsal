@@ -1,9 +1,13 @@
-from typing import TypedDict, Optional
-from app.schemas.session import SessionScenario, LLMResponse
+import operator
+from typing import TypedDict, Optional, Annotated
+from app.schemas.session_internal import SessionScenario, LLMResponse, FeedbackResponse
 
 class RehearsalState(TypedDict):
-    messages: list[dict]
+    messages: Annotated[list, operator.add]
     scenario: SessionScenario
     player_character_id: int
-    last_response: LLMResponse
+    last_response: Optional[LLMResponse]
     pending_feedback: Optional[str]
+    last_feedback_response: Optional[FeedbackResponse]
+    feedback_error: Optional[str]
+    next_node: str
